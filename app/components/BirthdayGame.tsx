@@ -86,6 +86,7 @@ const RULES_LIST = [
   "Type your answers and press <strong>Submit</strong>. You have 3 attempts total.",
   "Correct answers turn <span class='text-emerald-600 font-medium'>green</span> and are saved. Wrong ones turn <span class='text-red-500 font-medium'>red</span> - fix them and try again.",
   "Don't rush to test every guess. The others are watching closely 👀",
+  "We assume that today's is July 1st",
   "Find all <b>5</b> to unlock the prize! 🎁",
 ] as const;
 
