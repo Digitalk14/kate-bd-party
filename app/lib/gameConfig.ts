@@ -8,14 +8,21 @@ export interface Clue {
 }
 
 export const CLUES: Clue[] = [
-  { answer: 'ANSWER_1', hint: 'Hint #1 — where or how to find this word' },
-  { answer: 'ANSWER_2', hint: 'Hint #2 — where or how to find this word' },
-  { answer: 'ANSWER_3', hint: 'Hint #3 — where or how to find this word' },
-  { answer: 'ANSWER_4', hint: 'Hint #4 — where or how to find this word' },
-  { answer: 'ANSWER_5', hint: 'Hint #5 — where or how to find this word' },
+  { answer: 'Canada', hint: 'Hint: ⭐ Celebrate' },
+  { answer: 'About Time', hint: 'Hint: 📷 Remember' },
+  { answer: 'Ordinary', hint: 'Hint: 🎵 Listen' },
+  { answer: 'Gizma', hint: 'Hint: 🧸 Nice to touch' },
+  { answer: 'Catan', hint: 'Hint: 💬 Talk' },
 ];
+// export const CLUES: Clue[] = [
+//   { answer: 'Canada', hint: 'Hint: ⭐ Celebrate. Hint #2: Today’s celebration is hiding a clue' },
+//   { answer: 'About Time', hint: 'Hint: 📷 Remember. Hint #2: One of her favorite movies is pretending to be one of our memories.' },
+//   { answer: 'Ordinary', hint: 'Hint: 🎵 Listen. Hint #2: If something feels repeated, it probably isn’t an accident.' },
+//   { answer: 'Gizma', hint: 'Hint: 🧸 Nice to touch. Hint #2: Someone fluffy is carrying a secret.' },
+//   { answer: 'Coincedence', hint: 'Hint: 💬 Talk. Hint #2: Someone keeps saying the same unusual English word.' },
+// ];
 
 // Shown in the winning message
-export const CODE_PHRASE = 'your secret code phrase here';
+export const CODE_PHRASE = 'The night is young';
 
 export const MAX_TRIES = 3;

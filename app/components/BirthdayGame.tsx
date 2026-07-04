@@ -77,6 +77,18 @@ function saveState(state: GameState) {
   }
 }
 
+const RULES_LIST = [
+  "Five words <b>OR</b> phrases are hidden somewhere around the party.",
+  "Everything is connected to Katya - something she loves, something meaningful to her, or something that simply feels a little out of place.",
+  "Look for things that stand out from the usual picture… or things that are so smoothly integrated that they almost disappear.",
+  "Use the <b>hints</b> below each field to guide your search.",
+  "If your subconscious catches on to something, you may be on the right track. Trust that feeling.",
+  "Type your answers and press <strong>Submit</strong>. You have 3 attempts total.",
+  "Correct answers turn <span class='text-emerald-600 font-medium'>green</span> and are saved. Wrong ones turn <span class='text-red-500 font-medium'>red</span> - fix them and try again.",
+  "Don't rush to test every guess. The others are watching closely 👀",
+  "Find all <b>5</b> to unlock the prize! 🎁",
+] as const;
+
 // ─── COMPONENT ───────────────────────────────────────────────────────────────
 
 export default function BirthdayGame() {
@@ -173,54 +185,41 @@ export default function BirthdayGame() {
             Kate&apos;s Birthday Quest
           </h1>
           <p className="text-sm text-rose-400 font-medium uppercase tracking-widest">
-            Find all 5 hidden words
+            Find five things that tell Katya’s story.
           </p>
         </header>
 
         {/* ── Rules ── */}
-        <section className="bg-white rounded-2xl shadow-sm p-5 border border-rose-100">
-          <h2 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wider">
-            How to play
-          </h2>
-          <ul className="space-y-1.5 text-sm text-gray-600">
-            <li className="flex gap-2">
-              <span className="text-rose-400 shrink-0">1.</span>
-              <span>Five words or phrases are hidden somewhere around the party.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-rose-400 shrink-0">2.</span>
-              <span>Use the hints below each field to find them.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-rose-400 shrink-0">3.</span>
-              <span>Type your answers and press <strong>Submit</strong>. You have {MAX_TRIES} attempts total.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-rose-400 shrink-0">4.</span>
-              <span>Correct answers turn <span className="text-emerald-600 font-medium">green</span> and are saved. Wrong ones turn <span className="text-red-500 font-medium">red</span> — fix them and try again.</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-rose-400 shrink-0">5.</span>
-              <span>Find all 5 to unlock the prize!</span>
-            </li>
-          </ul>
-        </section>
+        {
+          gamePhase === 'playing' &&
+          <section className="bg-white rounded-2xl shadow-sm p-5 border border-rose-100">
+            <h2 className="font-semibold text-gray-800 mb-3 text-sm uppercase tracking-wider">
+              How to play
+            </h2>
+            <ul className="space-y-1.5 text-sm text-gray-600">
+              {RULES_LIST.map((rule, i) => (
+                <li key={rule} className="flex gap-2">
+                  <span className="text-rose-400 shrink-0">{i + 1}.</span>
+                  <span dangerouslySetInnerHTML={{ __html: rule }} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        }
 
         {/* ── Attempts counter ── */}
         <div className="flex items-center justify-center">
           <div
-            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm shadow-sm border ${
-              triesLeft > 1
-                ? 'bg-white border-rose-200 text-rose-600'
-                : triesLeft === 1
+            className={`inline-flex items-center gap-2 px-5 py-2.5 rounded-full font-semibold text-sm shadow-sm border ${triesLeft > 1
+              ? 'bg-white border-rose-200 text-rose-600'
+              : triesLeft === 1
                 ? 'bg-orange-50 border-orange-300 text-orange-600'
                 : 'bg-red-50 border-red-300 text-red-600'
-            }`}
+              }`}
           >
             <span
-              className={`text-lg ${
-                triesLeft > 1 ? '💖' : triesLeft === 1 ? '💛' : '🖤'
-              }`}
+              className={`text-lg ${triesLeft > 1 ? '💖' : triesLeft === 1 ? '💛' : '🖤'
+                }`}
             >
               {triesLeft > 1 ? '💖' : triesLeft === 1 ? '💛' : '🖤'}
             </span>
@@ -251,77 +250,79 @@ export default function BirthdayGame() {
               No tries left!
             </p>
             <p className="text-red-600 text-sm">
-              Better luck next time — ask Katya for a hint!
+              So sorry, you lost. Better luck next time!
             </p>
           </div>
         )}
+        {
+          gamePhase === 'playing' && (
+            <form onSubmit={handleSubmit} noValidate className="space-y-4">
+              {CLUES.map((clue, i) => {
+                const status = statuses[i];
+                const isCorrect = status === 'correct';
+                const isError = status === 'error';
 
-        {/* ── Form ── */}
-        <form onSubmit={handleSubmit} noValidate className="space-y-4">
-          {CLUES.map((clue, i) => {
-            const status = statuses[i];
-            const isCorrect = status === 'correct';
-            const isError = status === 'error';
+                return (
+                  <div key={i} className="bg-white rounded-2xl shadow-sm border border-rose-100 p-4 space-y-2">
+                    {/* Label row */}
+                    <div className="flex items-center justify-between">
+                      <label
+                        htmlFor={`clue-${i}`}
+                        className="text-xs font-semibold text-gray-500 uppercase tracking-wider"
+                      >
+                        Clue {i + 1}
+                      </label>
+                      {isCorrect && (
+                        <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
+                          ✓ Correct
+                        </span>
+                      )}
+                    </div>
 
-            return (
-              <div key={i} className="bg-white rounded-2xl shadow-sm border border-rose-100 p-4 space-y-2">
-                {/* Label row */}
-                <div className="flex items-center justify-between">
-                  <label
-                    htmlFor={`clue-${i}`}
-                    className="text-xs font-semibold text-gray-500 uppercase tracking-wider"
-                  >
-                    Clue {i + 1}
-                  </label>
-                  {isCorrect && (
-                    <span className="text-xs text-emerald-600 font-medium flex items-center gap-1">
-                      ✓ Correct
-                    </span>
-                  )}
-                </div>
+                    {/* Hint */}
+                    <p className="text-sm text-gray-600">{clue.hint}</p>
 
-                {/* Hint */}
-                <p className="text-sm text-gray-600">{clue.hint}</p>
+                    {/* Input */}
+                    <input
+                      id={`clue-${i}`}
+                      type="text"
+                      value={values[i]}
+                      disabled={isCorrect || gamePhase !== 'playing'}
+                      onChange={(e) => handleChange(i, e.target.value)}
+                      placeholder="Your answer…"
+                      autoComplete="off"
+                      autoCorrect="off"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      className={`w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-150 border-2 ${isCorrect
+                        ? 'border-emerald-400 bg-emerald-50 text-emerald-800 cursor-not-allowed'
+                        : isError
+                          ? 'border-red-400 bg-red-50 text-gray-800 focus:border-red-500'
+                          : gamePhase !== 'playing'
+                            ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
+                            : 'border-gray-200 bg-gray-50 text-gray-800 focus:border-rose-400 focus:bg-white'
+                        }`}
+                    />
+                  </div>
+                );
+              })}
 
-                {/* Input */}
-                <input
-                  id={`clue-${i}`}
-                  type="text"
-                  value={values[i]}
-                  disabled={isCorrect || gamePhase !== 'playing'}
-                  onChange={(e) => handleChange(i, e.target.value)}
-                  placeholder="Your answer…"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  autoCapitalize="off"
-                  spellCheck={false}
-                  className={`w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-150 border-2 ${
-                    isCorrect
-                      ? 'border-emerald-400 bg-emerald-50 text-emerald-800 cursor-not-allowed'
-                      : isError
-                      ? 'border-red-400 bg-red-50 text-gray-800 focus:border-red-500'
-                      : gamePhase !== 'playing'
-                      ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
-                      : 'border-gray-200 bg-gray-50 text-gray-800 focus:border-rose-400 focus:bg-white'
+              {/* Submit button */}
+              <button
+                type="submit"
+                disabled={isSubmitDisabled}
+                className={`w-full py-4 rounded-2xl font-bold text-base transition-all duration-150 shadow-sm ${isSubmitDisabled
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-rose-500 text-white hover:bg-rose-600 active:scale-95 shadow-rose-200 shadow-md'
                   }`}
-                />
-              </div>
-            );
-          })}
+              >
+                Submit Answers
+              </button>
+            </form>
+          )
+        }
+        {/* ── Form ── */}
 
-          {/* Submit button */}
-          <button
-            type="submit"
-            disabled={isSubmitDisabled}
-            className={`w-full py-4 rounded-2xl font-bold text-base transition-all duration-150 shadow-sm ${
-              isSubmitDisabled
-                ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-rose-500 text-white hover:bg-rose-600 active:scale-95 shadow-rose-200 shadow-md'
-            }`}
-          >
-            Submit Answers
-          </button>
-        </form>
 
         <p className="text-center text-xs text-rose-300 pb-4">
           Your progress is saved automatically ✨
